@@ -15,6 +15,9 @@ jobs:
       - name: Build Docker image
         run: docker build -t my-express-app .
 
+      - name: Tag Docker image for Docker Hub
+        run: docker tag my-express-app:latest hosnibounechada/my-express-app:latest
+
       - name: Docker login and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
