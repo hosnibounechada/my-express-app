@@ -12,12 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-        # - name: Build Docker image
-        #   run: docker build -t my-express-app .
-        # - name: Docker login and push
-        #   run: |
-        #     docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        #     docker push hosnibounechada/my-express-app
+      - name: Build Docker image
+        run: docker build -t my-express-app .
+
+      - name: Docker login and push
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push my-express-app
 
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v2
@@ -28,9 +29,6 @@ jobs:
 
       - name: Authenticate Docker with ECR
         run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/t9k5z7q0
-
-      - name: Build Docker image
-        run: docker build -t my-express-app .
 
       - name: Tag Docker image for ECR
         run: docker tag my-express-app:latest public.ecr.aws/t9k5z7q0/my-express-app:latest
