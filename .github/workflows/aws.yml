@@ -37,3 +37,7 @@ jobs:
 
       - name: Push Docker image to ECR
         run: docker push public.ecr.aws/t9k5z7q0/my-express-app:latest
+
+      - name: Update ECS service
+        run: |
+          aws ecs update-service --cluster my-express-app-cluster --service test-task --force-new-deployment
