@@ -5,6 +5,15 @@ on:
     branches:
       - main
 
+env:
+  IMAGE_NAME: my-express-app
+  DOCKERHUB_REPOSITORY: hosnibounechada
+  ECR_REPOSITORY: my-express-app
+  AWS_REGION: eu-central-1
+  ECS_CLUSTER: my-express-app-cluster
+  ECS_SERVICE: test-task
+  CONTAINER_NAME: my-express-app-container
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,32 +22,30 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker image
-        run: docker build -t my-express-app .
+        run: docker build -t ${{ env.IMAGE_NAME }} .
 
-      - name: Tag Docker image for Docker Hub
-        run: docker tag my-express-app:latest hosnibounechada/my-express-app:latest
-
-      - name: Docker login and push
+      - name: Tag Docker image, login and push
         run: |
+          docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.DOCKERHUB_REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker push hosnibounechada/my-express-app:latest
+          docker push ${{ env.DOCKERHUB_REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Authenticate Docker with ECR
+        id: login-ecr
         run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/t9k5z7q0
 
-      - name: Tag Docker image for ECR
-        run: docker tag my-express-app:latest public.ecr.aws/t9k5z7q0/my-express-app:latest
-
-      - name: Push Docker image to ECR
-        run: docker push public.ecr.aws/t9k5z7q0/my-express-app:latest
+      - name: Tag and push Docker image to Amazon ECR
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:latest public.ecr.aws/t9k5z7q0/${{ env.IMAGE_NAME }}:latest
+          docker push public.ecr.aws/t9k5z7q0/${{ env.IMAGE_NAME }}:latest
 
       - name: Update ECS service
         run: |
-          aws ecs update-service --cluster my-express-app-cluster --service test-task --force-new-deployment
+          aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --force-new-deployment
