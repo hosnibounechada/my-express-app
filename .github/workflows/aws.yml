@@ -21,7 +21,7 @@ jobs:
       - name: Docker login and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker push my-express-app
+          docker push hosnibounechada/my-express-app:latest
 
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v2
