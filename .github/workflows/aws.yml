@@ -13,12 +13,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker image
-        run: docker build -t hosnibounechada/my-express-app .
+        run: docker build -t my-express-app .
 
-      - name: Docker login and push
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker push hosnibounechada/my-express-app
+      #   - name: Docker login and push
+      #     run: |
+      #       docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      #       docker push hosnibounechada/my-express-app
 
       - name: Configure AWS CLI
         uses: aws-actions/configure-aws-credentials@v2
