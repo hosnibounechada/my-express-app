@@ -11,7 +11,7 @@ env:
   ECR_REPOSITORY: my-express-app
   AWS_REGION: eu-central-1
   ECS_CLUSTER: my-express-app-cluster
-  ECS_SERVICE: test-task
+  ECS_SERVICE: my-express-app-service
   CONTAINER_NAME: my-express-app-container
 
 jobs:
