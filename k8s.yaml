@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-depl
+  namespace: express
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: express
+  template:
+    metadata:
+      labels:
+        app: express
+    spec:
+      containers:
+        - name: express
+          image: hosnibounechada/express
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-srv
+  namespace: express
+spec:
+  selector:
+    app: express
+  ports:
+    - name: express
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
