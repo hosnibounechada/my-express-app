@@ -31,3 +31,44 @@ spec:
       protocol: TCP
       port: 3000
       targetPort: 3000
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: express-letsencrypt-issuer
+  namespace: express
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: hosni.bounechada@gmail.com
+    privateKeySecretRef:
+      name: express-letsencrypt-tls-secret
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: express-ingress-srv
+  namespace: express
+  annotations:
+      cert-manager.io/issuer: express-letsencrypt-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - express.lastingdynamicslibrary.xyz
+      secretName: express-staging-tls-secret
+  rules:
+    - host: express.lastingdynamicslibrary.xyz
+      http:
+        paths:
+          - path:  /
+            pathType: Prefix
+            backend:
+              service:
+                name: express-srv
+                port:
+                  number: 3000
