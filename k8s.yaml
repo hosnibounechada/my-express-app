@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: express
-          image: hosnibounechada/express
+          image: 10.96.95.173:5000/express
           resources: {}
 ---
 apiVersion: v1
